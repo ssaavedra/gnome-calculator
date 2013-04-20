@@ -50,6 +50,7 @@ public enum LexerTokenType
     NUMBER,             /* Number */
     SUP_NUMBER,         /* Super Number */
     NSUP_NUMBER,        /* Negative Super Number */
+    SCI_POWER,          /* Scientific power notation x10^n (⏨) */
     SUB_NUMBER,         /* Sub Number */
     FUNCTION,           /* Function */
     VARIABLE,           /* Variable name */
@@ -194,6 +195,9 @@ public class PreLexer
 
         if (c == '∜')
             return LexerTokenType.ROOT_4;
+
+        if (c == '⏨')
+            return LexerTokenType.SCI_POWER;
 
         if (c == '=')
             return LexerTokenType.ASSIGN;
@@ -353,7 +357,7 @@ public class Lexer
             type = prelexer.get_next_token ();
         }
 
-        if (type == LexerTokenType.AND || type == LexerTokenType.OR || type == LexerTokenType.XOR || type == LexerTokenType.NOT || type == LexerTokenType.ADD || type == LexerTokenType.SUBTRACT || type == LexerTokenType.MULTIPLY || type == LexerTokenType.DIVIDE || type == LexerTokenType.L_FLOOR || type == LexerTokenType.R_FLOOR || type == LexerTokenType.L_CEILING || type == LexerTokenType.R_CEILING || type == LexerTokenType.ROOT || type == LexerTokenType.ROOT_3 || type == LexerTokenType.ROOT_4 || type == LexerTokenType.ASSIGN || type == LexerTokenType.L_R_BRACKET || type == LexerTokenType.R_R_BRACKET || type == LexerTokenType.L_S_BRACKET || type == LexerTokenType.R_S_BRACKET || type == LexerTokenType.L_C_BRACKET || type == LexerTokenType.R_C_BRACKET || type == LexerTokenType.ABS || type == LexerTokenType.POWER || type == LexerTokenType.FACTORIAL || type == LexerTokenType.PERCENTAGE)
+        if (type == LexerTokenType.AND || type == LexerTokenType.OR || type == LexerTokenType.XOR || type == LexerTokenType.NOT || type == LexerTokenType.ADD || type == LexerTokenType.SUBTRACT || type == LexerTokenType.MULTIPLY || type == LexerTokenType.DIVIDE || type == LexerTokenType.L_FLOOR || type == LexerTokenType.R_FLOOR || type == LexerTokenType.L_CEILING || type == LexerTokenType.R_CEILING || type == LexerTokenType.ROOT || type == LexerTokenType.ROOT_3 || type == LexerTokenType.ROOT_4 || type == LexerTokenType.ASSIGN || type == LexerTokenType.L_R_BRACKET || type == LexerTokenType.R_R_BRACKET || type == LexerTokenType.L_S_BRACKET || type == LexerTokenType.R_S_BRACKET || type == LexerTokenType.L_C_BRACKET || type == LexerTokenType.R_C_BRACKET || type == LexerTokenType.ABS || type == LexerTokenType.SCI_POWER || type == LexerTokenType.POWER || type == LexerTokenType.FACTORIAL || type == LexerTokenType.PERCENTAGE)
             return insert_token (type);
 
         /* [LexerTokenType.PL_SUPER_MINUS][LexerTokenType.PL_SUPER_DIGIT]+ */

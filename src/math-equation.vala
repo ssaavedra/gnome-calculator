@@ -820,8 +820,7 @@ public class MathEquation : Gtk.TextBuffer
 
     public void insert_exponent ()
     {
-        insert ("×10");
-        number_mode = NumberMode.SUPERSCRIPT;
+        insert ("⏨");
     }
 
     public void insert_subtract ()
@@ -844,7 +843,6 @@ public class MathEquation : Gtk.TextBuffer
         equation.base = serializer.get_base ();
         equation.wordlen = word_size;
         equation.angle_units = angle_units;
-
         return equation.parse (out representation_base, out error_code, out error_token, out error_start, out error_end);
     }
 

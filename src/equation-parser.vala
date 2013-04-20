@@ -33,7 +33,8 @@ private enum Precedence
     UNARY_MINUS     = 10,
     POWER           = 10,
     FACTORIAL       = 11,
-    NUMBER_VARIABLE = 12,
+    SCI_POWER       = 12,
+    NUMBER_VARIABLE = 13,
     /* DEPTH should be always at the bottom. It stops node jumping off the current depth level. */
     DEPTH
 }
@@ -94,8 +95,11 @@ public abstract class LRNode : ParseNode
     {
         var l = left.solve ();
         var r = right.solve ();
-        if (l == null || r == null)
+
+        if (l == null || r == null) {
             return null;
+        }
+
         return solve_lr (l, r);
     }
 
@@ -509,6 +513,24 @@ public class XPowYNode : LRNode
     }
 }
 
+/**
+ * Allows us to use scientific notation
+ */
+public class XPowTo10YNode : LRNode
+{
+    public XPowTo10YNode (Parser parser, LexerToken? token, uint precedence, Associativity associativity)
+    {
+        base (parser, token, precedence, associativity);
+    }
+
+    public override Number solve_lr (Number l, Number r)
+    {
+        var exp = new Number.integer (10);
+
+        return l.multiply (exp.xpowy (r));
+    }
+}
+
 public class XPowYIntegerNode : ParseNode
 {
     public XPowYIntegerNode (Parser parser, LexerToken? token, uint precedence, Associativity associativity)
@@ -815,6 +837,7 @@ public class Parser
         var ans = root.solve ();
         if (ans == null)
         {
+
             error_code = ErrorCode.INVALID;
             error_token = null;
             error_start = error_token_start;
@@ -856,6 +879,8 @@ public class Parser
             return Precedence.POWER;
         if (type == LexerTokenType.FACTORIAL)
             return Precedence.FACTORIAL;
+        if (type == LexerTokenType.SCI_POWER)
+            return Precedence.SCI_POWER
         if (type == LexerTokenType.NUMBER || type == LexerTokenType.VARIABLE)
             return Precedence.NUMBER_VARIABLE;
         return Precedence.UNKNOWN;
@@ -1477,6 +1502,17 @@ public class Parser
             }
             else
                 return false;
+        }
+        else if (token.type == LexerTokenType.SCI_POWER)
+        {
+            insert_into_tree (new XPowTo10YNode (this, token, make_precedence_p (Precedence.SCI_POWER) get_associativity_p (Precedence.SCI_POWER));
+
+            if(!expression_1 ())
+                return false;
+            if(!expression_2 ())
+                return false;
+
+            return true;
         }
         else if (token.type == LexerTokenType.POWER)
         {
